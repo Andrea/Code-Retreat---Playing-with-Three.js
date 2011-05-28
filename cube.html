@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>three.js webgl - materials - shaders [Fresnel]</title>
+		<meta charset="utf-8">
+		<style type="text/css">
+			body {
+				background:#0000ff;
+				padding:0;
+				margin:0;
+				font-weight: bold;
+				overflow:hidden;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px; width: 100%;
+				color: #ffffff;
+				padding: 5px;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				z-index:1000; 
+			}
+
+			a {
+				color: #ffffff;
+			}
+			#log { position:absolute; top:50px; text-align:left; display:block; z-index:100 }
+
+			#oldie a { color:#0b0 }
+		</style>
+	</head>
+
+	<body>
+		<pre id="log"></pre>
+
+		<div id="info"><a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - webgl cube Fresnel shader demo. texture by <a href="http://www.humus.name/index.php?page=Textures" target="_blank">Humus</a> </div>
+
+		<script type="text/javascript" src="three_js/build/Three.js"></script>
+	<script type="text/javascript" src="js/RequestAnimationFrame.js"></script>
+	<!--	<script type="text/javascript" src="js/Detector.js"></script>
+		<script type="text/javascript" src="js/RequestAnimationFrame.js"></script>
+-->
+		<script type="text/javascript">
+
+		 var camera, scene, renderer,
+		geometry, material, mesh, light, particle1;
+
+    init();
+    animate();
+	
+
+    function init() {
+
+        camera = new THREE.Camera( 95, window.innerWidth / window.innerHeight, 1, 10000 );
+        camera.position.z = 1000;
+
+        scene = new THREE.Scene();
+		
+		var PI2 = Math.PI * 2;
+		var program = function ( context ) {
+
+                    context.beginPath();
+                    context.arc( 0, 0, 1, 0, PI2, true );
+                    context.closePath();
+                    context.fill();
+
+                }
+		scene.addLight( new THREE.AmbientLight( 0x00020 ) );
+		light =  new THREE.PointLight( 0xffffff, 1, 50 );
+		
+		particle1 = new THREE.Particle( new THREE.ParticleCanvasMaterial( { color: 0xff0040, program: program } ) );
+        particle1.scale.x = particle1.scale.y = particle1.scale.z = 0.5;
+      //   scene.addObject( particle1 );
+		
+		light.position.x = 10;
+		light.position.y = 50;
+		light.position.z = 130;
+
+        geometry = new THREE.Cube( 200, 200, 200 );
+        geometry2 = new THREE.Cube( 200, 200, 200 );
+        material = new THREE.MeshLambertMaterial( { color: 0x00ff00 } ) ;
+        
+
+        mesh = new THREE.Mesh( geometry, material );
+        scene.addObject( mesh );
+        scene.addLight( light );
+
+        renderer = new THREE.CanvasRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+        document.body.appendChild( renderer.domElement );
+
+    }
+
+    function animate() {
+
+        // Include examples/js/RequestAnimationFrame.js for cross-browser compatibility.
+        requestAnimationFrame( animate );
+        render();
+
+    }
+
+    function render() {
+
+        mesh.rotation.x += 0.01;
+        mesh.rotation.y += 0.02;
+		
+		 var time = new Date().getTime() * 0.0005;
+
+                mesh.rotation.y -= 0.01;
+
+                particle1.position.x = Math.sin( time * 0.7 ) * 30;
+                particle1.position.y = Math.cos( time * 0.5 ) * 40;
+                particle1.position.z = Math.cos( time * 0.3 ) * 30;
+
+                light.position.x = particle1.position.x;
+                light.position.y = particle1.position.y;
+                light.position.z = particle1.position.z;
+
+
+
+        renderer.render( scene, camera );
+
+    }
+		</script>
+
+	</body>
+</html>
